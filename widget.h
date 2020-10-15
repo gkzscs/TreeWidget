@@ -5,6 +5,7 @@
 
 
 class Item;
+class QToolButton;
 
 class Widget : public QWidget
 {
@@ -16,9 +17,25 @@ public:
 
 private:
     void init();
+    void initMember();
+    void initUI();
+    void initSignalSlot();
+
+private:
+    QToolButton *createToolButton(const QString &icon, const QString &txt);
+
+private slots:
+    void btnAddSlot();
+    void btnDeleteSlot();
+    void btnOkSlot();
+    void btnCancelSlot();
 
 private:
     Item *_item;
+    QToolButton *_btnAdd;
+    QToolButton *_btnDelete;
+    QToolButton *_btnOk;
+    QToolButton *_btnCancel;
 
 };
 #endif // WIDGET_H

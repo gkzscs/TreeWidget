@@ -20,6 +20,39 @@ Item::~Item()
     if (_wgtRight) _wgtRight->deleteLater();
 }
 
+bool Item::add(Item *item)
+{
+    if (_stateType != Super) setStateType(Super);
+    return ControlContainer::add(item);
+}
+
+bool Item::insert(int idx, Item *item)
+{
+    if (_stateType != Super) setStateType(Super);
+    return ControlContainer::insert(idx, item);
+}
+
+bool Item::remove(int idx)
+{
+    bool res = ControlContainer::remove(idx);
+    if (isEmpty() && _stateType != Normal) setStateType(Normal);
+
+    return res;
+}
+
+bool Item::remove(Item *item)
+{
+    bool res = ControlContainer::remove(item);
+    if (isEmpty() && _stateType != Normal) setStateType(Normal);
+
+    return res;
+}
+
+void Item::clear()
+{
+    if (_stateType != Normal) setStateType(Normal);
+}
+
 void Item::setStateType(StateType type)
 {
     if (type == _stateType && _state) return;
@@ -141,6 +174,34 @@ Item *Item::root() const
     return root;
 }
 
+Item *Item::getSelectedItem() const
+{
+    if (isSelected()) return const_cast<Item *>(this);
+    for (auto item : _listItems)
+    {
+        auto res = item->getSelectedItem();
+        if (res) return res;
+    }
+
+    return nullptr;
+}
+
+void Item::destroyMe()
+{
+    auto par = parentItem();
+    if (!par) return;
+
+    par->remove(this);
+    delete this;
+}
+
+void Item::addItem()
+{
+    auto item = new Item();
+    item->setTitle("New item");
+    add(item);
+}
+
 void Item::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
@@ -183,7 +244,7 @@ void Item::mousePressEvent(QMouseEvent *event)
     if (rect.contains(pos))
     {
         // Here must use `root()` to start the traverse
-        root()->cancelLastSelect();
+        cancelLastSelect();
         setSelected(true);
     }
 }
@@ -258,11 +319,11 @@ void Item::initUI()
 
     // Set other attributes
     setMinimumWidth(400);   // To modify
-    setFold(true);
     setSelected(false);
     setItemHeight(30);
     setMargin(0);
     setStateType(_stateType);
+    setFold(true);
 
     // Set member attributes
     _labTitle->setScaledContents(true);
@@ -279,19 +340,8 @@ void Item::showSubItems(bool flag)
     _wgtRight->setVisible(flag);
 }
 
-bool Item::cancelLastSelect()
+void Item::cancelLastSelect()
 {
-    if (isSelected())
-    {
-        setSelected(false);
-        return true;
-    }
-
-    // If has children items
-    for (auto item : _listItems)
-    {
-        if (item->cancelLastSelect()) return true;
-    }
-
-    return false;
+    auto item = root()->getSelectedItem();
+    if (item) item->setSelected(false);
 }

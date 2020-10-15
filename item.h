@@ -26,6 +26,12 @@ public:
     Item(StateType type = Normal, QWidget *parent = nullptr);
     virtual ~Item() override;
 
+    virtual bool add(Item *item) override;
+    virtual bool insert(int idx, Item *item) override;
+    virtual bool remove(int idx) override;
+    virtual bool remove(Item *item) override;
+    virtual void clear() override;
+
     void setStateType(StateType type);
     void setFold(bool flag);
     void setSelected(bool flag);
@@ -39,9 +45,13 @@ public:
     int getItemHeight() const;
     int getMargin() const;
     QString getTitle() const;
+
     int totalHeight() const;
     Item *parentItem() const;
     Item *root() const;
+    Item *getSelectedItem() const;
+    void destroyMe();
+    void addItem();
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -57,7 +67,7 @@ protected:
 
 private:
     void showSubItems(bool flag);
-    bool cancelLastSelect();
+    void cancelLastSelect();
 
 private:
     StateType _stateType;
