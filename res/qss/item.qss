@@ -1,0 +1,4 @@
+Item[selected="true"] > QLabel#_labTitle
+{
+    background-color: rgba(55, 255, 255, 100);
+}

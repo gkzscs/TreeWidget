@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file alias="plus">res/icon/plus.png</file>
+        <file alias="subtract">res/icon/subtract.png</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file alias="item">res/qss/item.qss</file>
+    </qresource>
+</RCC>
